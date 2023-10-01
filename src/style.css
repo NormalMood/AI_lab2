@@ -1,0 +1,35 @@
+
+
+
+#content-wrapper {
+  height: 500px;
+  overflow: auto;
+}
+
+#content {
+  height: 100%;
+}
+
+.img-container {
+  width: 300px;
+  height: 200px;
+}
+
+img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#content {
+  display: flex; 
+  flex-direction: row;
+}
+
+#properties {
+  margin-top: 40px;
+}
+
+#prediction-container {
+  margin-top: 40px;
+}
