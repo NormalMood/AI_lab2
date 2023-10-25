@@ -1,4 +1,4 @@
-import { multiply, matrix, Matrix } from 'mathjs';
+import { multiply, matrix, Matrix, subtract } from 'mathjs';
 
 // enum Classes {
 //   Bird,
@@ -12,16 +12,16 @@ import { multiply, matrix, Matrix } from 'mathjs';
 //   [Classes.Planer]: [1, 1, 0, 0, 0, 0],
 // };
 
-/*enum Classes {
+enum Classes {
     Cat,
     Elephant,
     Mouse,
     Vorona,
     Zebra,
     Tiger,
-}*/
+}
 
-enum Classes {
+/*enum Classes {
     Tiranozavr,
     Pterodaktil,
     Tritseratops,
@@ -33,9 +33,9 @@ enum Classes {
    // Spinozavr,
   //  Velotseraptor,
     Elasmozavr
-}
+}*/
 
-const classesEnumToClassesNames = new Map<Classes, string>([
+/*const classesEnumToClassesNames = new Map<Classes, string>([
     [Classes.Tiranozavr, 'Тиранозавр'],
     [Classes.Pterodaktil, 'Птеродактиль'],
     [Classes.Tritseratops, 'Трицератопс'],
@@ -43,18 +43,39 @@ const classesEnumToClassesNames = new Map<Classes, string>([
     [Classes.Stegozavr, 'Стегозавр'],
     [Classes.Kompsognat, 'Компсогнат'],
     [Classes.Elasmozavr, 'Эласмозавр'],
+])*/
+
+const classesEnumToClassesNames = new Map<Classes, string>([
+    [Classes.Cat, 'Кошка'],
+    [Classes.Elephant, 'Слон'],
+    [Classes.Mouse, 'Мышь'],
+    [Classes.Vorona, 'Ворона'],
+    [Classes.Zebra, 'Зебра'],
+    [Classes.Tiger, 'Тигр'],
 ])
 
-// const classToProperties: ClassToProperties = {
-//     [Classes.Cat]: [1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
-//     [Classes.Elephant]: [1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1],
-//     [Classes.Mouse]: [1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
-//     [Classes.Vorona]: [0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-//     [Classes.Zebra]: [1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-//     [Classes.Tiger]: [1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1],
-// };
-
 const classToProperties: ClassToProperties = {
+    [Classes.Cat]:      [1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+    [Classes.Elephant]: [1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1],
+    [Classes.Mouse]:    [1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+    [Classes.Vorona]:   [0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+    [Classes.Zebra]:    [1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [Classes.Tiger]:    [1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+};
+
+let customProp = false
+const arr1 = [...Object.values(classToProperties)]
+for (let i = 0; i < arr1.length-1; ++i) {
+    if (customProp && i > 0) break;
+    for (let j = i + 1; j < arr1.length; ++j) {
+        const row1 = arr1[i];
+        const row2 = arr1[j];
+        const rowResult = row1.map((elem, i) => Math.abs(elem - row2[i]));
+        console.log('rowResult:', rowResult, 'sum in row: ', rowResult.reduce((acc, b) => acc + b));
+    }
+}
+
+/*const classToProperties: ClassToProperties = {
     [Classes.Tiranozavr]: [1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1],
     [Classes.Pterodaktil]: [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
     [Classes.Tritseratops]: [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0],
@@ -62,37 +83,37 @@ const classToProperties: ClassToProperties = {
     [Classes.Stegozavr]: [0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0],
     [Classes.Kompsognat]: [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
     [Classes.Elasmozavr]: [1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-};
+};*/
 
 const classToImages: ClassToImages = {
-    [Classes.Tiranozavr]: '/img/dino.png',
-    [Classes.Pterodaktil]: '/img/dino.png',
-    [Classes.Tritseratops]: '/img/dino.png',
-    [Classes.Diplodok]: '/img/dino.png',
-    [Classes.Stegozavr]: '/img/dino.png',
-    [Classes.Kompsognat]: '/img/dino.png',
-    [Classes.Elasmozavr]: '/img/dino.png'
+    [Classes.Cat]: '/img/cat.jpg',
+    [Classes.Elephant]: '/img/elephant.jpg',
+    [Classes.Mouse]: '/img/mouse.jpg',
+    [Classes.Vorona]: '/img/vorona.jpg',
+    [Classes.Zebra]: '/img/zebra.jpg',
+    [Classes.Tiger]: '/img/tiger.jpg',
 }
 
 const propertyIndexToPropertyName: Map<number, string> = new Map([
-    [0, 'Хищник'],
-    [1, 'Летает'],
-    [2, 'Живет в воде'],
-    [3, 'Большой'],
-    [4, 'Ходит на 4 лапах'],
-    [5, 'Есть рога'],
-    [6, 'Длинная шея'],
-    [7, 'Длинный хвост'],
-    [8, 'Шипы'],
-    [9, 'Копыта'],
-    [10, 'Шипы на конце хвоста'],
-    [11, 'Быстро бегает'],
-    [12, 'Есть клюв'],
-    [13, 'Большая голова'],
-    [14, 'Имеет оперение'],
-    [15, 'Есть пластины на спине'],
-    [16, 'Толстая кожа'],
-    [17, 'Короткие передние лапы']
+    [0, 'Ходит на 4 лапах'],
+    [1, 'Есть клюв'],
+    [2, 'Есть хвост'],
+    [3, 'Есть хобот'],
+    [4, 'Полосатое животное'],
+    [5, 'Хищник'],
+    [6, 'Домашнее'],
+    [7, 'Летает'],
+    [8, 'Стайное'],
+    [9, 'Есть копыта'],
+    [10, 'Ведет ночной образ жизни'],
+    [11, 'Любит воду'],
+    [12, 'Мяукает'],
+    [13, 'Умеет рычать'],
+    [14, 'Крупное'],
+    [15, 'Нападает на людей'],
+    [16, 'Питается молоком'],
+    [17, 'Охотится за антилопами'],
+    [18, 'Легко дрессируется']
 ])
 
 
@@ -107,6 +128,8 @@ type ClassToProperties = {
 type ClassToImages = {
     [key in Classes]: string;
 }
+
+const expertisedModelMatrix: number[][] = []
 
 function findNewModel(model: number[][], inappropriationIndex: number): number[][] {
     const newModel = model.map((row) => [...row]);
@@ -166,7 +189,9 @@ function doExpertise(model: number[][]): {inappropriationIndex: number, isDone: 
         );
         const expertisedModelVector = expertisedModel._data as number[];
         const foundMaxIndex = findMaxVectorIndex(expertisedModelVector);
+        expertisedModelMatrix.push(expertisedModelVector)
         if (foundMaxIndex !== learningIndex) {
+            expertisedModelMatrix.pop()
           return {
             inappropriationIndex: learningIndex,
             isDone: false
@@ -184,11 +209,11 @@ function predictClassByProperties(
     model: number[][],
     properties: number[],
     actualClass: Classes
-): { predictedClass: Classes; guessed: boolean } {
+): { prediction: Matrix; predictedClass: Classes; guessed: boolean } {
     const prediction: Matrix = multiply(properties, matrix(model));
     const predictionVector = prediction._data as number[];
     const predictedClass = findMaxVectorIndex(predictionVector);
-    return { predictedClass, guessed: predictedClass === actualClass };
+    return { prediction, predictedClass, guessed: predictedClass === actualClass };
 }
 
 let model = new Array(Object.values(classToProperties)[0].length)
@@ -221,8 +246,11 @@ const newClassProperties = [0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
 console.log(
     //predictClassByProperties(model, newClassProperties, Classes.Tiger)
     //predictClassByProperties(model, newClassProperties, Classes.Mouse)
-    predictClassByProperties(model, newClassProperties, Classes.Diplodok)
+  //  predictClassByProperties(model, newClassProperties, Classes.Diplodok)
 );
+
+console.log('====================================')
+// tyt custom
 
 
 function getClassesHTML(): string {
@@ -237,6 +265,7 @@ function getClassesHTML(): string {
         contentHTML += '<div class="img-container">'
         contentHTML += `<img src="${classToImages[classesIndex]}" />`
         contentHTML += '</div>'
+        contentHTML += `<span>Демоны = [${expertisedModelMatrix[expertisedModelMatrix.length - Object.keys(classToProperties).length + classesIndex]}]</span><br />`
         for (
             let propertyIndex = 0;
             propertyIndex < Object.values(classToProperties)[0].length;
@@ -265,6 +294,7 @@ function bindFunctionToPredictButton() {
         if (anotherNewClassProperties.length > 0) {
             alert(classesEnumToClassesNames
                 .get(predictClassByProperties(model, anotherNewClassProperties, Classes.Diplodok).predictedClass) as string)
+            alert(`${predictClassByProperties(model, anotherNewClassProperties, Classes.Diplodok).prediction}`)
         }
     }
 }
@@ -287,6 +317,9 @@ function getEquationsHTML(): string {
 
 let anotherNewClassProperties = new Array<number>(0)
 
+if (Object.keys(classToProperties).length === 6)
+    expertisedModelMatrix[expertisedModelMatrix.length - Object.keys(classToProperties).length + 2][4] = -4
+
 const contentDiv: HTMLElement | null = document.getElementById('content');
 contentDiv!.innerHTML = getClassesHTML();
 
@@ -296,3 +329,5 @@ bindFunctionToPredictButton()
 
 const equationsDiv: HTMLElement | null = document.getElementById('equations-container');
 equationsDiv!.innerHTML = getEquationsHTML();
+
+console.log(expertisedModelMatrix)
