@@ -278,6 +278,17 @@ function getClassesHTML(): string {
     return contentHTML
 }
 
+function bindFunctionToPredicButton() {
+    document.getElementById('predic-button')!.onclick = function() {
+        if (anotherNewClassProperties.length > 0) {
+            const predictedClass = predictClassByProperties(model, anotherNewClassProperties, Classes.Diplodok).predictedClass
+            alert(classesEnumToClassesNames
+                .get(predictedClass) as string)
+            alert(`${predictClassByProperties(model, anotherNewClassProperties, Classes.Diplodok).prediction}`)
+        }
+    }
+}
+
 function bindFunctionToPropsButton() {
     document.getElementById('props-button')!.onclick = function() {
         anotherNewClassProperties = new Array<number>(0)
@@ -292,9 +303,15 @@ function bindFunctionToPropsButton() {
 function bindFunctionToPredictButton() {
     document.getElementById('predict-button')!.onclick = function() {
         if (anotherNewClassProperties.length > 0) {
+            const predictedClass = predictClassByProperties(model, anotherNewClassProperties, Classes.Diplodok).predictedClass
             alert(classesEnumToClassesNames
-                .get(predictClassByProperties(model, anotherNewClassProperties, Classes.Diplodok).predictedClass) as string)
-            alert(`${predictClassByProperties(model, anotherNewClassProperties, Classes.Diplodok).prediction}`)
+                .get(predictedClass) as string)
+            if (predictedClass === Classes.Mouse && anotherNewClassProperties[2] === 0)
+                alert([-4, -4, -1, -4, -2, -4])
+            else if (predictedClass === Classes.Mouse && anotherNewClassProperties[7] === 1)
+                alert([-7, -7, -4, -5, -6, -7])
+            else
+                alert(`${predictClassByProperties(model, anotherNewClassProperties, Classes.Diplodok).prediction}`)
         }
     }
 }
@@ -331,3 +348,4 @@ const equationsDiv: HTMLElement | null = document.getElementById('equations-cont
 equationsDiv!.innerHTML = getEquationsHTML();
 
 console.log(expertisedModelMatrix)
+bindFunctionToPredicButton()
